@@ -1,4 +1,7 @@
 #!/bin/bash -x
 
-#DISPLAY WELCOME MESSAGE
 echo ".............................. Gambling Simulation Problem .............................."
+
+#CONSTANT
+STAKE=100
+BET=1
