@@ -14,7 +14,7 @@ cash=0
 #GENERATE RANDOM NUMBER FOR GAMBLER
 randomNumber=$((RANDOM%2))
 
-#CHECK IF WIN OR LOSE
+#CHECK IF WIN OR LOOSE BY $1
 cash=$STAKE
 if [ $randomNumber -eq $IS_WIN ]
 then
