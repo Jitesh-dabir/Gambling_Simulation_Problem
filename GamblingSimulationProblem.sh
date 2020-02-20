@@ -1,12 +1,13 @@
 #!/bin/bash -x
 
-#DISPLAY WELCOME MESSAGE
 echo ".............................. Gambling Simulation Problem .............................."
 
 #CONSTANT
 STAKE=100
 BET=1
 IS_WIN=1
+MAXWIN=$(($STAKE+$STAKE/2))
+MAXLOOSE=$(($STAKE-$STAKE/2))
 
 #VARIABLE
 cash=0
@@ -14,16 +15,21 @@ cash=0
 #GENERATE RANDOM NUMBER FOR GAMBLER
 randomNumber=$((RANDOM%2))
 
-#CHECK IF WIN OR LOOSE BY $1
-cash=$STAKE
-if [ $randomNumber -eq $IS_WIN ]
-then
-	echo "Win :"$IS_WIN"$"
-	cash=$(($cash+$BET))
-else
-	echo "Lose:"$IS_WIN"$"
-	cash=$(($cash-$BET))
-fi
-echo "Cash:"$cash
+#FUNCTION TO GET DAILY CASH WIN OR LOSE
+function gamble()
+{
+	cash=$STAKE 
+	while [[ $cash -ne $MAXWIN && $cash -ne $MAXLOOSE ]]
+	do
+		if [ $randomNumber -eq $IS_WIN ]
+		then
+			cash=$(($cash+$BET))
+		else
+			cash=$(($cash-$BET))
+		fi
+	done
+	echo "Cash:"$cash
+}
 
-
+#FUNCTION CALL TO GET DAILY CASH
+gamble
