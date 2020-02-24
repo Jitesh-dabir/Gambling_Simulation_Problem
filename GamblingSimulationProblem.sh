@@ -1,4 +1,4 @@
-#!/bin/bash -X 
+#!/bin/bash -x
 
 echo ".............................. Gambling Simulation Problem .............................."
 
@@ -9,19 +9,21 @@ declare -A dailyCash
 STAKE=100
 BET=1
 IS_WIN=1
-NUMBER_OF_DAYS=20
+DAYS_IN_MONTH=30
 MAXWIN=$(($STAKE+$STAKE/2))
 MAXLOOSE=$(($STAKE-$STAKE/2))
+MONTH_IN_YEAR=12
 
 #VARIABLE
 cash=0
-limit=0
+dayWin=0
+dayLoose=0
 
-#FUNCTION TO GET DAILY CASH WIN OR LOOSE
+#FUNCTION TO GET DAILY CASH WIN OR LOSE
 function gamble()
 {
 	#GENERATE RANDOM NUMBER FOR GAMBLER
-   randomNumber=$((RANDOM%2))
+	randomNumber=$((RANDOM%2))
 	cash=$STAKE 
 	while [[ $cash -ne $MAXWIN && $cash -ne $MAXLOOSE ]]
 	do
@@ -35,18 +37,29 @@ function gamble()
 	echo "$cash"
 }
 
-#CHECK IF WIN OR LOOSE FOR 20 DAYS AND FIND TOTAL AMOUNT 
-for (( day=1; day<=$NUMBER_OF_DAYS; day++))
+#CHECK IF WIN OR LOSE UNTIL CONDITION
+for ((month=1; month<=$MONTH_IN_YEAR; month++))
 do
-	cashPerDay=$(gamble)
-	cashPerDay=$(( $cashPerDay - $STAKE ))
-	dailyCash[Day $day]=$cashPerDay 
-	totalCash=$(($totalCash+$(($cashPerDay))))
-	if [ $cashPerDay -gt 0 ]
-	then
-		echo "Day$day  win   :"$cashPerDay"$"
-	else
-		echo "Day$day  loose:"$cashPerDay"$"
-	fi
+	for (( day=1; day<=$DAYS_IN_MONTH; day++))
+	do
+   	cashPerDay=$(gamble)
+		if [ $cashPerDay -gt $STAKE  ]
+		then
+			((dayWin++))
+		else
+			((dayLoose++))
+		fi
+   	cashPerDay=$(( $cashPerDay - $STAKE ))
+   	dailyCash[Day $day]=$cashPerDay 
+   	totalCash=$(($totalCash+$(($cashPerDay))))
+	done
+	echo "Total days won   in month-$month is $dayWindays by $(($dayWin*50))"
+	echo "Total days Loose in month-$month is $dayLoosedays by $(($dayLoose*50))"
+	echo "Total Cash for a month:$totalCash"
+
+	#REINITIALIZE THE VARIABLES
+	dayWin=0
+	dayLoose=0
+	totalCash=0
+	echo " "
 done
-echo "Total cash for 20 days:$totalCash"
