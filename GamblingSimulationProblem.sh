@@ -16,8 +16,10 @@ MONTH_IN_YEAR=12
 
 #VARIABLE
 cash=0
+limit=0
 dayWin=0
 dayLoose=0
+flag=0
 
 #FUNCTION TO GET DAILY CASH WIN OR LOSE
 function gamble()
@@ -42,24 +44,46 @@ for ((month=1; month<=$MONTH_IN_YEAR; month++))
 do
 	for (( day=1; day<=$DAYS_IN_MONTH; day++))
 	do
-   	cashPerDay=$(gamble)
+		cashPerDay=$(gamble)
 		if [ $cashPerDay -gt $STAKE  ]
 		then
 			((dayWin++))
 		else
 			((dayLoose++))
 		fi
-   	cashPerDay=$(( $cashPerDay - $STAKE ))
-   	dailyCash[Day $day]=$cashPerDay 
-   	totalCash=$(($totalCash+$(($cashPerDay))))
+		cashPerDay=$(( $cashPerDay - $STAKE ))
+		dailyCash[Day $day]=$cashPerDay 
+		totalCash=$(($totalCash+$(($cashPerDay))))
+		totalCashMonth[$day]=$totalCash
 	done
-	echo "Total days won   in month-$month is $dayWindays by $(($dayWin*50))"
-	echo "Total days Loose in month-$month is $dayLoosedays by $(($dayLoose*50))"
-	echo "Total Cash for a month:$totalCash"
 
-	#REINITIALIZE THE VARIABLES
+	#TO KNOW THE DAYS WON AND LOST BY HOW MUCH
+	echo "........................................Month $month.........................................."
+	echo "Total days won $dayWin days by    :$(($dayWin*50))"
+	echo "Total days Loose $dayLoose days by  :$(($dayLoose*50))"
+	echo "Total Cash for a month:$totalCash"
+	echo ""
+
+	#REINITIALIZING THE VARIABLES
+	maxday=0
+	minday=0
 	dayWin=0
 	dayLoose=0
-	totalCash=0
-	echo " "
+	min=${totalCashMonth[0]}
+	max=${totalCashMonth[0]}
+	for ((j=0; j<${#totalCashMonth[@]}; j++))
+	do
+		if [ $(echo " ${totalCashMonth[j]} -gt $max") ]
+		then
+			max=$((${totalCashMonth[j]}))
+			maxday=$j
+		fi
+		if [ $(echo " ${totalCashMonth[j]} -lt $min") ]
+		then
+			min=$((${totalCashMonth[j]}))
+			minday=$j
+		fi	
+	done
+	echo "most lucky is day is $maxday cash :$max"
+	echo "most unlucky is day is $minday cash:$min"
 done
